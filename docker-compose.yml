@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  mongodb: # base de données mongodb
+    image: mongo
+    container_name: tp-mongo-bdd
+    ports:
+      - 27017:27017
+
+  mongo-express: # propose une interface graphique pour mongo
+    image: mongo-express
+    container_name: tp-mongo-ui
+    depends_on:
+      - mongodb
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_MONGODB_PORT=27017
+    ports:
+      - "8888:8081"
+
+  mongo_import: # permet l'import des bases de données
+    image: mongo
+    container_name: tp-mongo-import
+    depends_on:
+      - mongodb
+    volumes:
+      - ./bdd:/bdd:ro
+    command: bash /bdd/import.sh
